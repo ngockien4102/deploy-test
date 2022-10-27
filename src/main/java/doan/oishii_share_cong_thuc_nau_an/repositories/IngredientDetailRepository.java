@@ -14,7 +14,7 @@ import java.util.List;
 public interface IngredientDetailRepository extends JpaRepository<IngredientDetail, Integer> {
 
     @Query("select new doan.oishii_share_cong_thuc_nau_an.common.vo.IngredientDetailVo(" +
-            "id.ingredientDetailID, id.quantity, id.unit, id.name, id.calo )" +
+            "id.ingredientDetailID, id.quantity, id.unit, id.name, id.calo, id.mainIngredient )" +
             "from IngredientDetail id join id.dishID d where d.dishID = :dishId and d.status <> 3")
     public List<IngredientDetailVo> findIngredientDetailVoByDishID (Integer dishId);
 

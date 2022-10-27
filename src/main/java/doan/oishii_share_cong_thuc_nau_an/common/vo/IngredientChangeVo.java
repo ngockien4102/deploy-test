@@ -25,7 +25,7 @@ public class IngredientChangeVo {
 
     private Integer ingredientDetailId;
 
-    private String notFoundMessage;
+
 
     public IngredientChangeVo(Integer ingredientChangeId, Integer quantity, String unit, String name, Integer calo) {
         this.ingredientChangeId = ingredientChangeId;

@@ -95,12 +95,12 @@ public class RecipeDetailController {
     }
 
     //lấy nguyên liệu thay thế
-    @GetMapping("/getIngredientChange")
-    public ResponseEntity<?> getIngredientChange(@RequestParam(value = "ingredientDetailId") List<Integer> ingredientDetailId) {
-   //     List<Integer> ingredientDetailIdList = Arrays.asList(ingredientDetailId);
-        List<IngredientChangeVo> ingredientChangeList = ingredientDetailService.getIngredientChange(ingredientDetailId);
-            return ResponseEntity.ok(ingredientChangeList);
-    }
+//    @GetMapping("/getIngredientChange")
+//    public ResponseEntity<?> getIngredientChange(@RequestParam(value = "ingredientDetailId") List<Integer> ingredientDetailId) {
+//   //     List<Integer> ingredientDetailIdList = Arrays.asList(ingredientDetailId);
+//        List<IngredientChangeVo> ingredientChangeList = ingredientDetailService.getIngredientChange(ingredientDetailId);
+//            return ResponseEntity.ok(ingredientChangeList);
+//    }
 
     //nút lưu comment
     @PostMapping("/saveDishComment")

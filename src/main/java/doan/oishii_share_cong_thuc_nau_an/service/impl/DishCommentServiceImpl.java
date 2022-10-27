@@ -197,12 +197,23 @@ public class DishCommentServiceImpl implements DishCommentService {
 
     @Override
     public DishComment deleteComment(Integer dishCommentId, Account account) {
-        DishComment dishComment = dishCommentRepository.findById(dishCommentId).orElseThrow(() -> new NotFoundException(ErrorCode.Not_Found,"dish comment" + dishCommentId + " Not exist or dish comment was blocked "));
+        DishComment dishComment = dishCommentRepository.findById(dishCommentId).orElseThrow(() ->
+                new NotFoundException(ErrorCode.Not_Found,"dish comment" + dishCommentId + " Not exist or dish comment was blocked "));
         if(account.getRole().equals("ROLE_ADMIN") || account.getRole().equals("ROLE_MOD")){
             dishComment.setStatus(3);
         }else if(account.getRole().equals("ROLE_USER") && dishComment.getAccount().getAccountId().equals(account.getAccountId()) ){
             dishComment.setStatus(3);
         }
         return dishCommentRepository.save(dishComment);
+    }
+
+    @Override
+    public ResponseEntity<?> approveComment(Integer dishCommentId) {
+        DishComment dishComment = dishCommentRepository.findById(dishCommentId).orElseThrow(() ->
+                new NotFoundException(ErrorCode.Not_Found,"dish comment" + dishCommentId + " Not exist or dish comment was blocked "));
+        dishComment.setFlag(0);
+        dishComment.setStatus(1);
+        dishCommentRepository.save(dishComment);
+        return ResponseEntity.ok(new MessageVo("Đã phê duyệt bình luận", "success"));
     }
 }

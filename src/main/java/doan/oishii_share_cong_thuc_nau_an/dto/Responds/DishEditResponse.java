@@ -1,5 +1,6 @@
 package doan.oishii_share_cong_thuc_nau_an.dto.Responds;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import doan.oishii_share_cong_thuc_nau_an.web.entities.*;
 import lombok.Data;
 
@@ -17,18 +18,12 @@ public class DishEditResponse {
     private Integer size;
     private Integer time;
     private String video;
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate createDate;
     private Integer status;
-    private Formula formulaId;
-    private List<Step> listStep;
-    private List<DishImage> listDishImage;
-    private List<DishCategory> idDishCategory;
-    private List<IngredientDetail> listIngredientDetail;
-
-
-
-
-
-
-
+    private FormulaResponse formula;
+    private List<StepResponse> listStep;
+    private List<DishImageResponse> listDishImage;
+    private List<DishCategoryResponse> DishCategory;
+    private List<IngredientDetailResponse> listIngredientDetail;
 }

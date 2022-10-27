@@ -147,6 +147,7 @@ public class BlogController {
         return blogService.dislikeBlog(blogId, account);
 
     }
+    //-----------------------------------------
 
     @GetMapping("/getBlogComment")
     public ResponseEntity<?> getBlogComments(Model model,@RequestParam(value = "blogId") Integer blogId,
@@ -177,6 +178,61 @@ public class BlogController {
         model.addAttribute("pageIndex", pageIndex);
         model.addAttribute("numOfPages", blogCommentAccountVos.getTotalPages());
         return ResponseEntity.ok(model);
+    }
+
+    @PostMapping("/saveBlogComment")
+    @PreAuthorize("hasRole('ROLE_ADMIN')or hasRole('ROLE_MOD')or hasRole('ROLE_USER')")
+    public ResponseEntity<?> saveBlogComment(@Valid @RequestBody SaveBlogCommentRequest saveBlogCommentRequest,
+                                             Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Account account = accountRepository.findAccountByUserName(userDetails.getUsername());
+
+        if(saveBlogCommentRequest.getBlogCommentId() == null){
+            return blogCommentService.createComment(saveBlogCommentRequest.getBlogId(), saveBlogCommentRequest.getContent(),account);
+        }else{
+            return blogCommentService.updateComment(saveBlogCommentRequest.getBlogId(),saveBlogCommentRequest.getBlogCommentId(),
+                    saveBlogCommentRequest.getContent(),account);
+        }
+    }
+
+    @PostMapping("/reportBlogComment")
+    @PreAuthorize("hasRole('ROLE_ADMIN')or hasRole('ROLE_MOD')or hasRole('ROLE_USER')")
+    public ResponseEntity<?> reportComment( @RequestParam(value = "blogCommentId", required = false) Integer blogCommentId,
+                                            Authentication authentication) {
+        MessageVo message = new MessageVo();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Account account = accountRepository.findAccountByUserName(userDetails.getUsername()); //lấy ra thông tin ng đăng nhập
+        return blogCommentService.reportComment(blogCommentId, account);
+
+    }
+
+    @PostMapping("/likeBlogComment")
+    @PreAuthorize("hasRole('ROLE_ADMIN')or hasRole('ROLE_MOD')or hasRole('ROLE_USER')")
+    public ResponseEntity<?> likeBlogComment(@RequestParam(value = "blogCommentId") Integer blogCommentId,
+                                      Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Account account = accountRepository.findAccountByUserName(userDetails.getUsername()); //lấy ra thông tin ng đăng nhập
+        return blogCommentService.likeBlogComment(blogCommentId, account);
+
+    }
+
+    @PostMapping("/dislikeBlogComment")
+    @PreAuthorize("hasRole('ROLE_ADMIN')or hasRole('ROLE_MOD')or hasRole('ROLE_USER')")
+    public ResponseEntity<?> dislikeBlogComment(@RequestParam(value = "blogCommentId") Integer blogCommentId,
+                                         Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Account account = accountRepository.findAccountByUserName(userDetails.getUsername()); //lấy ra thông tin ng đăng nhập
+        return blogCommentService.dislikeBlogComment(blogCommentId, account);
+
+    }
+
+    @PostMapping("/deleteBlogComment")
+    @PreAuthorize("hasRole('ROLE_ADMIN')or hasRole('ROLE_MOD')or hasRole('ROLE_USER')")
+    public ResponseEntity<?> deleteBlogComment(@RequestParam(value = "blogCommentId") Integer blogCommentId,
+                                        Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Account account = accountRepository.findAccountByUserName(userDetails.getUsername()); //lấy ra thông tin ng đăng nhập
+        return blogCommentService.deleteBlogComment(blogCommentId, account);
     }
 
 }

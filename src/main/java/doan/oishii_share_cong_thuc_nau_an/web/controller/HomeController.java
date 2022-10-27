@@ -99,20 +99,20 @@ public class HomeController {
     }
 
     //search recipe by name
-    //http://localhost:8080/searchbyname/{name}
+    //http://localhost:8080/searchdishbyname/{name}
     @GetMapping("/searchdishbyname/{name}")
     public ResponseEntity<List<DishResponse>> getDishByName(@PathVariable String name) {
         List<DishResponse> dishes = dishServive.getDishByName(name);
         return ResponseEntity.ok(dishes);
     }
 
-    //search recipe by name
-    //http://localhost:8080/searchdishbycate/{cate}
-//    @GetMapping("/searchdishbycate/{cate}")
-//    public ResponseEntity<List<DishResponse>> getDishBycate(@PathVariable String cate) {
-//        List<DishResponse> dishes = dishServive.getDishByCate(cate);
-//        return ResponseEntity.ok(dishes);
-//    }
+//    search recipe by cate
+//    http://localhost:8080/searchdishbycate/{cate}
+    @GetMapping("/searchdishbycate/{cate}")
+    public ResponseEntity<List<DishResponse>> getDishBycate(@PathVariable String cate) {
+        List<DishResponse> dishes = dishServive.getDishByCate(cate);
+        return ResponseEntity.ok(dishes);
+    }
 
     //get 5 recipe newest
     //http://localhost:8080/gettop5new

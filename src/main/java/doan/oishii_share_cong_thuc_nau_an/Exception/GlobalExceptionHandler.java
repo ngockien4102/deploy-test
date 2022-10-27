@@ -31,31 +31,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 //                "not found", new HttpHeaders(), HttpStatus.FORBIDDEN);
 //    }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionResponse handleAllException(Exception ex, WebRequest request) {
-        // quá trình kiểm soat lỗi diễn ra ở đây
-        return new ExceptionResponse(ErrorCode.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionResponse handleBadCredentialsExceptionException(Exception ex, WebRequest request) {
-        // quá trình kiểm soat lỗi diễn ra ở đây
-        return new ExceptionResponse(ErrorCode.INTERNAL_SERVER_ERROR, "Tên người dùng hoặc mật khẩu sai");
-    }
-
-//    @ExceptionHandler(BadRequestException.class)
-//    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-//    public ExceptionResponse handleBadRequestException(BadRequestException ex, WebRequest request) {
-//         return new ExceptionResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+//    @ExceptionHandler(Exception.class)
+//    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ExceptionResponse handleAllException(Exception ex, WebRequest request) {
+//        // quá trình kiểm soat lỗi diễn ra ở đây
+//        return new ExceptionResponse(ErrorCode.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
 //    }
+
+//    @ExceptionHandler(BadCredentialsException.class)
+//    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ExceptionResponse handleBadCredentialsExceptionException(Exception ex, WebRequest request) {
+//        // quá trình kiểm soat lỗi diễn ra ở đây
+//        return new ExceptionResponse(ErrorCode.INTERNAL_SERVER_ERROR, "Tên người dùng hoặc mật khẩu sai");
+//    }
+
+
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ExceptionResponse handleNotFoundException(NotFoundException ex, WebRequest request) {
         return new ExceptionResponse(ErrorCode.Not_Found, ex.getMessage());
     }
-
 
 }

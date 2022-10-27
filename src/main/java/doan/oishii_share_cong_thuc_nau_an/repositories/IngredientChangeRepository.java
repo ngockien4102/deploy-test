@@ -21,5 +21,5 @@ public interface IngredientChangeRepository extends JpaRepository<IngredientChan
             " ic.name,  ic.calo) " +
             " from IngredientChange ic join ic.ingredientDetail id " +
             "where id.ingredientDetailID = :ingredientDetailId ")
-    IngredientChangeVo getIngredientChange(Integer ingredientDetailId);
+    List<IngredientChangeVo> getIngredientChange(Integer ingredientDetailId);
 }

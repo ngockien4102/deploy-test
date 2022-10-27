@@ -65,7 +65,7 @@ public class Dish  {
 
     @OneToMany( mappedBy = "dishID",fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
 //    @JsonManagedReference(value = "comment-dish")
-    private Set<DishComment> listDishComment;
+    private List<DishComment> listDishComment;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "Dish_DishCategory", joinColumns = @JoinColumn(name = "DishId"),

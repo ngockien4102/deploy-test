@@ -3,6 +3,8 @@ package doan.oishii_share_cong_thuc_nau_an.web.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "IngredientDetail" )
@@ -30,6 +32,9 @@ public class IngredientDetail {
     @Column(name = "calo",nullable=true)
     private Integer calo;
 
+    @Column(name = "main_ingredient")
+    private Integer mainIngredient;
+
 //    @ManyToOne
 //    @JoinColumn(name = "ingredient_id", referencedColumnName = "ingredient_id", nullable = false)
 ////    @JsonBackReference
@@ -40,7 +45,11 @@ public class IngredientDetail {
 //    @JsonBackReference(value = "ingredient-dish")
     private Dish dishID;
 
-    @OneToOne(mappedBy = "ingredientDetail")
-//    @JsonBackReference
-    private IngredientChange ingredientChange;
+//    @OneToOne(mappedBy = "ingredientDetail")
+////    @JsonBackReference
+//    private IngredientChange IngredientChange;
+
+
+    @OneToMany( mappedBy = "ingredientDetail",fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
+    private List<IngredientChange> ingredientChangeList;
 }

@@ -11,5 +11,5 @@ public interface IngredientDetailService {
 
     List<IngredientDetailVo> findIngredientDetailVoByDishID (Integer dishId);
 
-    List<IngredientChangeVo> getIngredientChange (List<Integer> ingredientIds);
+//    List<IngredientChangeVo> getIngredientChange (Integer ingredientId);
 }

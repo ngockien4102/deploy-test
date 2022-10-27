@@ -29,4 +29,5 @@ public interface DishCommentService {
      DishComment deleteComment(Integer dishCommentId , Account account);
 
 
+     ResponseEntity<?> approveComment( Integer dishCommentId);
 }

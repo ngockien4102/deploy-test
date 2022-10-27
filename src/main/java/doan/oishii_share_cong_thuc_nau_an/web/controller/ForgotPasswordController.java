@@ -64,7 +64,8 @@ public class ForgotPasswordController {
         try {
             //accountService.updateResetPassword(password, email);
             accountService.updateResetPasswordToken(token, email);
-            String resetPasswordLink = Utility.getSiteURL(request) + "/showResetPasswordPage?token=" + token;
+            //String resetPasswordLink = Utility.getSiteURL(request) + "/showResetPasswordPage?token=" + token;
+            String resetPasswordLink =  token;
             //sendEmail(email, token);
             sendEmail(email, resetPasswordLink);
             message.setMessContent("Chúng tôi đã gửi mật khẩu mới đến mail của bạn.");
@@ -87,15 +88,17 @@ public class ForgotPasswordController {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
-        helper.setFrom("oishiishare123@gmail.com", "OishiiShare");
+        helper.setFrom("chantran16121999@gmail.com", "OishiiShare");
         helper.setTo(recipientEmail);
 
         String subject = "Oishii Share gửi bạn mật khẩu mới cho tài khoản của bạn";
 
         String content = "<p>Xin chào,</p>"
                 + "<p>Bạn đã sử dụng tính năng quên mật khẩu của OishiiShare.</p>"
-                + "<p>Vui lòng bấm vào đường link dưới để thực hiện thay đổi mật khẩu:</p>"
-                + "<p><a href=\"" + link + "\"> Thay đổi mật khẩu</a></p>"
+                //+ "<p>Vui lòng bấm vào đường link dưới để thực hiện thay đổi mật khẩu:</p>"
+               // + "<p><a href=\"" + link + "\"> Thay đổi mật khẩu</a></p>"
+                + "<p>Vui lòng nhập token dưới vào màn reset password để thực hiện thay đổi mật khẩu:</p>"
+                + "<p><b> " + link + "</b></p>"
                 + "<br>"
                 + "<p>Cảm ơn vì đã sử dụng Oishii Share <3</p>";
 

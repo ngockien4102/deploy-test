@@ -1,6 +1,7 @@
 package doan.oishii_share_cong_thuc_nau_an.web.controller;
 
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishFormulaVo;
+import doan.oishii_share_cong_thuc_nau_an.dto.Responds.DishEditResponse;
 import doan.oishii_share_cong_thuc_nau_an.service.DishServive;
 import doan.oishii_share_cong_thuc_nau_an.web.entities.Dish;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,17 +57,17 @@ public class RecipeManageController {
         return new ResponseEntity<>("Thêm món ăn thành công !!!", HttpStatus.OK);
     }
 
-//    @GetMapping("/mod/getdishbyid/{id}")
-//    public ResponseEntity<?>getDishById(@PathVariable("id")Integer id){
-//        dishServive.getDishById(id);
-//        return null;
-//    }
-
-    @PutMapping("/mod/editrecipe")
-    public ResponseEntity<?> updateRecipe(@RequestBody Dish dishRequest) {
-        dishServive.editRecipe(dishRequest);
-        return new ResponseEntity<>("update success", HttpStatus.OK);
+    @GetMapping("/mod/getdishbyid/{id}")
+    public ResponseEntity<?>getDishById(@PathVariable("id")Integer id){
+        DishEditResponse dishEditResponse = dishServive.getDishById(id);
+        return ResponseEntity.ok(dishEditResponse);
     }
+
+//    @PutMapping("/mod/editrecipe")
+//    public ResponseEntity<?> updateRecipe(@RequestBody Dish dishRequest) {
+//        dishServive.editRecipe(dishRequest);
+//        return new ResponseEntity<>("update success", HttpStatus.OK);
+//    }
 
     @DeleteMapping("/mod/deleterecipe/{id}")
     public ResponseEntity<?> deleteRecipe(@PathVariable("id") Integer recipeId) {

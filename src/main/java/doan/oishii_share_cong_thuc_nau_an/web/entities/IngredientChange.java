@@ -34,14 +34,13 @@ public class IngredientChange {
     @Column(name = "calo",nullable=true)
     private Integer calo;
 
-//    @ManyToOne
-//    @JoinColumn(name = "ingredient_id", referencedColumnName = "ingredient_id", nullable = false)
-////    @JsonBackReference
-//    private Ingredient ingredientID;
-
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_detail_id", referencedColumnName = "ingredient_detail_id")
-//    @JsonManagedReference
     private IngredientDetail ingredientDetail;
+
+//    @OneToOne
+//    @JoinColumn(name = "ingredient_detail_id", referencedColumnName = "ingredient_detail_id")
+////    @JsonManagedReference
+//    private IngredientDetail ingredientDetail;
 
 }

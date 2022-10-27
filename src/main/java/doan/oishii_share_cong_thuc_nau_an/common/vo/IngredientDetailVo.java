@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,6 +30,11 @@ public class IngredientDetailVo {
 
     private Integer calo;
 
+    private Integer mainIngredient;
+
+    private List<IngredientChangeVo> ingredientChangeVoList;
+
+
     //Ingredient-------------------
 
 //    private Integer ingredientID;
@@ -46,5 +52,12 @@ public class IngredientDetailVo {
 //    private String unitName;
 
 
-
+    public IngredientDetailVo(Integer ingredientDetailId, Integer quantity, String unit, String name, Integer calo, Integer mainIngredient) {
+        this.ingredientDetailId = ingredientDetailId;
+        this.quantity = quantity;
+        this.unit = unit;
+        this.name = name;
+        this.calo = calo;
+        this.mainIngredient = mainIngredient;
+    }
 }

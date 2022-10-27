@@ -31,7 +31,7 @@ public interface DishRepository extends JpaRepository<Dish, Integer> {
             " from Dish d join d.formulaId f join f.account a where a.userName = :creater " +
             "AND (cast(d.dishID as string ) LIKE :searchData " +
             "OR d.name LIKE :searchData) and d.status = 1 and a.status <> 3")
-    public Page<DishFormulaVo> getRecipeOfCreater(String creater, @Param("searchData") String searchData,Pageable pageable);
+    public Page<DishFormulaVo> getRecipeOfCreater(String creater, @Param("searchData") String searchData, Pageable pageable);
 
 
     @Query("select new doan.oishii_share_cong_thuc_nau_an.common.vo.DishDetailVo(" +
@@ -45,23 +45,23 @@ public interface DishRepository extends JpaRepository<Dish, Integer> {
             "f.formulaID,f.describe,a.userName,f.summary) from Dish d join d.formulaId f join f.account a where  d.dishID = :dishID")
     public DishDetailVo getDishDetail2(Integer dishID);
 
-    @Query("select d from Dish d where d.name like %?1%")
+    @Query("select d from Dish d where d.name like %?1% and d.status=1")
     public List<Dish> findDishByNameLike(String name);
 
 
     @Query(value = "select d.* from dish d left join dish_dish_category ddc on d.dish_id = ddc.dish_id\n" +
             "\t\t\t\t\t join dish_category dc on ddc.dish_categoryid = dc.dish_category_id\n" +
-            "\t\t\t\t\t where dc.name = :name",nativeQuery = true)
-    public List<Dish> findDishByIdDishCategory(String name);
+            "\t\t\t\t\t where dc.name = :name and d.status=1", nativeQuery = true)
+    public List<Dish> findDishByDishCategory(String name);
 
-    @Query(value = "select distinct top 5 * from dish d  order by d.create_date desc ",nativeQuery = true)
+    @Query(value = "select distinct top 5 * from dish d where d.status=1 order by d.create_date desc ", nativeQuery = true)
     public List<Dish> getTop5ByNew();
 
     @Query(value = "insert into dish_dish_category(dish_id,dish_categoryid)\n" +
-            "values (:dishId,:cateId)",nativeQuery = true)
+            "values (:dishId,:cateId)", nativeQuery = true)
     @Modifying
     @Transactional
-    public void insertDishCategory(@Param("dishId") int dishId,@Param("cateId")int cateId);
+    public void insertDishCategory(@Param("dishId") int dishId, @Param("cateId") int cateId);
 
     @Query("select new doan.oishii_share_cong_thuc_nau_an.common.vo.DishDetailVo(" +
             "d.dishID,d.name,d.origin,d.calo, d.level, d.numberPeopleForDish,d.size, cast(d.createDate as string), d.video, " +
@@ -78,4 +78,7 @@ public interface DishRepository extends JpaRepository<Dish, Integer> {
             "from Dish d join d.idDishCategory dc join d.formulaId f join f.account a " +
             "where d.calo >= 0 and d.calo <= :calo and dc.name = :meal")
     public List<DishDetailVo> getListDishByBMIUser(Integer calo, String meal);
+
+    @Query("select d from Dish d where d.status=1 and d.dishID = :id")
+    public Dish findByDishID(Integer id);
 }
