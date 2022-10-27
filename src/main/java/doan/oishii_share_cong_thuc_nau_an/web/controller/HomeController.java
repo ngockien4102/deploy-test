@@ -101,15 +101,15 @@ public class HomeController {
     //search recipe by name
     //http://localhost:8080/searchdishbyname/{name}
     @GetMapping("/searchdishbyname/{name}")
-    public ResponseEntity<List<DishResponse>> getDishByName(@PathVariable String name) {
+    public ResponseEntity<List<DishResponse>> getDishByName(@PathVariable("name") String name) {
         List<DishResponse> dishes = dishServive.getDishByName(name);
         return ResponseEntity.ok(dishes);
     }
 
 //    search recipe by cate
 //    http://localhost:8080/searchdishbycate/{cate}
-    @GetMapping("/searchdishbycate/{cate}")
-    public ResponseEntity<List<DishResponse>> getDishBycate(@PathVariable String cate) {
+    @GetMapping("/searchdishbycate/{cateId}")
+    public ResponseEntity<List<DishResponse>> getDishBycate(@PathVariable("cateId") Integer cate) {
         List<DishResponse> dishes = dishServive.getDishByCate(cate);
         return ResponseEntity.ok(dishes);
     }

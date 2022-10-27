@@ -24,7 +24,7 @@ public interface DishServive {
 
     List<DishResponse> getDishByName(String name);
 
-    List<DishResponse> getDishByCate(String cate);
+    List<DishResponse> getDishByCate(Integer cate);
 
     List<DishResponse> getTop5New();
 

@@ -139,7 +139,7 @@ public class DishSeviceImpl implements DishServive {
         return dishResponseList;
     }
 
-    public List<DishResponse> getDishByCate(String cate) throws NotFoundException {
+    public List<DishResponse> getDishByCate(Integer cate) throws NotFoundException {
         List<Dish> dishList = dishRepository.findDishByDishCategory(cate);
         if (dishList.isEmpty()) {
             throw new NotFoundException(ErrorCode.Not_Found, "Don't have recipe for category " + cate);
@@ -511,6 +511,7 @@ public class DishSeviceImpl implements DishServive {
             throw new NotFoundException(ErrorCode.Not_Found, "không tìm thấy món ăn hoặc món ăn đã bị xóa!!!");
         }
         DishEditResponse response = new DishEditResponse();
+        response.setDishID(dish.getDishID());
         response.setName(dish.getName());
         response.setOrigin(dish.getOrigin());
         response.setCalo(dish.getCalo());
