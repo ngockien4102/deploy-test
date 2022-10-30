@@ -1,5 +1,6 @@
 package doan.oishii_share_cong_thuc_nau_an.web.controller;
 
+import doan.oishii_share_cong_thuc_nau_an.common.logging.LogUtils;
 import doan.oishii_share_cong_thuc_nau_an.common.utils.JwtResponse;
 import doan.oishii_share_cong_thuc_nau_an.common.utils.JwtUtils;
 import doan.oishii_share_cong_thuc_nau_an.common.utils.LoginRequest;
@@ -46,6 +47,7 @@ public class LoginController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest){
+		LogUtils.getLog().info("START login");
 		if(loginRequest.getUsername() == null || loginRequest.getUsername() == ""){
 			return ResponseEntity
 					.badRequest()
@@ -67,6 +69,7 @@ public class LoginController {
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 		Account account = accountRepository.findAccountByUserName(userDetails.getUsername());
+		LogUtils.getLog().info("END login");
 		return ResponseEntity.ok(new JwtResponse(jwt,
 				userDetails.getId(),
 				userDetails.getUsername(),
@@ -82,6 +85,7 @@ public class LoginController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+		LogUtils.getLog().info("START registerUser");
 		if(signUpRequest.getUsername() == null || signUpRequest.getUsername() == ""){
 			return ResponseEntity
 					.badRequest()
@@ -122,7 +126,7 @@ public class LoginController {
 		account.setRole("ROLE_USER");
 		account.setStatus(1);
 		accountRepository.save(account);
-
+		LogUtils.getLog().info("END registerUser");
 		return ResponseEntity.ok(new MessageVo("Bạn đã đăng ký thành công", "info"));
 	}
 

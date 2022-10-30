@@ -6,7 +6,9 @@ import doan.oishii_share_cong_thuc_nau_an.web.entities.IngredientDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,4 +24,10 @@ public interface IngredientChangeRepository extends JpaRepository<IngredientChan
             " from IngredientChange ic join ic.ingredientDetail id " +
             "where id.ingredientDetailID = :ingredientDetailId ")
     List<IngredientChangeVo> getIngredientChange(Integer ingredientDetailId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE ic FROM dbo.ingredient_change ic INNER JOIN dbo.ingredient_detail id ON id.ingredient_detail_id = ic.ingredient_detail_id\n" +
+            "JOIN dbo.dish d ON d.dish_id = id.dish_id WHERE d.dish_id=:dishId",nativeQuery = true)
+    void deleteAllIngredientChangeByDishId(@Param("dishId")Integer dishId);
 }

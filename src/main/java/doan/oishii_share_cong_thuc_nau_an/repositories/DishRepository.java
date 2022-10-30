@@ -46,12 +46,12 @@ public interface DishRepository extends JpaRepository<Dish, Integer> {
     public DishDetailVo getDishDetail2(Integer dishID);
 
     @Query("select d from Dish d where d.name like %?1% and d.status=1")
-    public List<Dish> findDishByNameLike(String name);
+    public List<Dish> findDishByNameLike(String name,Pageable pageable);
 
     @Query(value = "select d.* from dish d left join dish_dish_category ddc on d.dish_id = ddc.dish_id\n" +
             "\t\t\t\t\t join dish_category dc on ddc.dish_categoryid = dc.dish_category_id\n" +
             "\t\t\t\t\t where dc.dish_category_id = :id and d.status=1", nativeQuery = true)
-    public List<Dish> findDishByDishCategory(Integer id);
+    public List<Dish> findDishByDishCategory(Integer id,Pageable pageable);
 
     @Query(value = "select distinct top 5 * from dish d where d.status=1 order by d.create_date desc ", nativeQuery = true)
     public List<Dish> getTop5ByNew();

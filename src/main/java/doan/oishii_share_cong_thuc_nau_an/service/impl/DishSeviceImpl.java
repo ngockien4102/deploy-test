@@ -91,8 +91,12 @@ public class DishSeviceImpl implements DishServive {
         return dishRepository.getDishDetail(dishID);
     }
 
-    public List<DishResponse> getDishByName(String name) {
-        List<Dish> dishList = dishRepository.findDishByNameLike(name.trim());
+    public List<DishResponse> getDishByName(String name, Integer pageIndex) {
+        if (pageIndex == null || pageIndex <= 0) {
+            pageIndex = 1;
+        }
+        Pageable pageable = PageRequest.of(pageIndex - 1, 5);
+        List<Dish> dishList = dishRepository.findDishByNameLike(name.trim(), pageable);
         if (dishList.isEmpty()) {
             throw new NotFoundException(ErrorCode.Not_Found, "Don't have recipe for name " + name);
         }
@@ -136,11 +140,16 @@ public class DishSeviceImpl implements DishServive {
             }
             dishResponseList.add(dishResponse);
         }
+
         return dishResponseList;
     }
 
-    public List<DishResponse> getDishByCate(Integer cate) throws NotFoundException {
-        List<Dish> dishList = dishRepository.findDishByDishCategory(cate);
+    public List<DishResponse> getDishByCate(Integer cate, Integer pageIndex) throws NotFoundException {
+        if (pageIndex == null || pageIndex <= 0) {
+            pageIndex = 1;
+        }
+        Pageable pageable = PageRequest.of(pageIndex - 1, 5);
+        List<Dish> dishList = dishRepository.findDishByDishCategory(cate, pageable);
         if (dishList.isEmpty()) {
             throw new NotFoundException(ErrorCode.Not_Found, "Don't have recipe for category " + cate);
         }
@@ -239,7 +248,13 @@ public class DishSeviceImpl implements DishServive {
         }
         dish.setName(dishRequest.getName());
         dish.setOrigin(dishRequest.getOrigin());
-        dish.setCalo(dishRequest.getCalo());
+
+        int totalCalo = 0;
+        for (IngredientDetail d : dishRequest.getListIngredientDetail()) {
+            totalCalo += d.getCalo();
+        }
+
+        dish.setCalo(totalCalo);
         dish.setLevel(dishRequest.getLevel());
         dish.setNumberPeopleForDish(dishRequest.getNumberPeopleForDish());
         dish.setSize(dishRequest.getSize());
@@ -279,7 +294,6 @@ public class DishSeviceImpl implements DishServive {
             ingredientDetail.setDishID(dishRequest);
             ingredientDetail.setIngredientDetailID(ingredientDetailRepository.save(ingredientDetail).getIngredientDetailID());
 
-            List<IngredientChange> ingredientChangeList = new ArrayList<>();
             for (IngredientChange ic : detail.getIngredientChangeList()) {
                 IngredientChange change = new IngredientChange();
                 change.setName(ic.getName());
@@ -327,14 +341,10 @@ public class DishSeviceImpl implements DishServive {
         formula.setFormulaID(formulaRepository.save(formula).getFormulaID());
 
 
-        Set<Step> stepSet = dishRequest.getFormulaId().getListStep();
+        List<Step> stepSet = dishRequest.getFormulaId().getListStep();
         for (Step s : stepSet) {
-            Step step = null;
-            if (s.getFormulaID() != null) {
-                step.setStepID(s.getStepID());
-            } else {
-                step = new Step();
-            }
+            Step step = new Step();
+
             step.setDescribe(s.getDescribe());
             step.setTitle(s.getTitle());
             step.setFormulaID(formula);
@@ -343,69 +353,79 @@ public class DishSeviceImpl implements DishServive {
         return formula;
     }
 
-//    @Override
-//    public void editRecipe(Dish dishRequest) {
-//        Dish dish = dishRepository.getById(dishRequest.getDishID());
-//        dish.setName(dishRequest.getName());
-//        dish.setOrigin(dishRequest.getOrigin());
-//        dish.setCalo(dishRequest.getCalo());
-//        dish.setLevel(dishRequest.getLevel());
-//        dish.setNumberPeopleForDish(dishRequest.getNumberPeopleForDish());
-//        dish.setSize(dishRequest.getSize());
-//        dish.setTime(dishRequest.getTime());
-//        dish.setVideo(dishRequest.getVideo());
-//        dish.setCreateDate(LocalDate.now());
-//
+    @Override
+    public void editRecipe(Integer dishId, Dish dishRequest) {
+        //delete step
+        stepRepository.deleteStepByDishId(dishId);
+        //delete IngredientDetail And IngredientChange
+        ingredientChangeRepository.deleteAllIngredientChangeByDishId(dishId);
+        ingredientDetailRepository.deleteIngredientDetailByDishID(dishId);
+
+        //delete image and video
+        dishImageRepository.deleteDishImageByDishId(dishId);
+        //delete category
+        categoryRepository.deleteDishCategoryByDishId(dishId);
+
+        dishRequest.setDishID(dishId);
+
+        Dish dish = dishRepository.getById(dishId);
+        dish.setName(dishRequest.getName());
+        dish.setOrigin(dishRequest.getOrigin());
+
+        int totalCalo = 0;
+        for (IngredientDetail d : dishRequest.getListIngredientDetail()) {
+            totalCalo += d.getCalo();
+        }
+
+        dish.setCalo(totalCalo);
+        dish.setLevel(dishRequest.getLevel());
+        dish.setNumberPeopleForDish(dishRequest.getNumberPeopleForDish());
+        dish.setSize(dishRequest.getSize());
+        dish.setTime(dishRequest.getTime());
+        dish.setVideo(dishRequest.getVideo());
+        dish.setCreateDate(LocalDate.now());
+
 //        Formula formula = updateFormulaAndStep(dishRequest);
 //        dish.setFormulaId(formula);
-//        dishRepository.save(dish);
-//
-//        updateIngredientDetailAndIngredientChange(dishRequest);
-//
-//        updateCategory(dish.getDishID(), dishRequest);
-//        updateImage(dishRequest);
-//    }
-//
-//    void updateIngredientDetailAndIngredientChange(Dish dishRequest) {
-//        List<IngredientDetail> ingredientDetailList = dishRequest.getListIngredientDetail();
-//        for (IngredientDetail detail : ingredientDetailList) {
-//            IngredientDetail ingredientDetail = null;
-//            if (detail.getIngredientDetailID() != null) {
-//                ingredientDetail.setIngredientDetailID(detail.getIngredientDetailID());
-//            } else {
-//                ingredientDetail = new IngredientDetail();
-//            }
-//            ingredientDetail.setName(detail.getName());
-//            ingredientDetail.setQuantity(detail.getQuantity());
-//            ingredientDetail.setUnit(detail.getUnit());
-//            ingredientDetail.setCalo(detail.getCalo());
-//            ingredientDetail.setDishID(dishRequest);
-//            ingredientDetail.setIngredientDetailID(ingredientDetailRepository.save(ingredientDetail).getIngredientDetailID());
-//
-//            IngredientChange change = null;
-//            if (detail.getIngredientChange().getIngredientChangeID() != null) {
-//                change.setIngredientChangeID(detail.getIngredientChange().getIngredientChangeID());
-//            } else {
-//                change = new IngredientChange();
-//            }
-//            change.setName(detail.getIngredientChange().getName());
-//            change.setQuantity(detail.getIngredientChange().getQuantity());
-//            change.setUnit(detail.getIngredientChange().getUnit());
-//            change.setCalo(detail.getIngredientChange().getCalo());
-//            change.setIngredientDetail(ingredientDetail);
-//            ingredientChangeRepository.save(change);
-//        }
-//    }
+        dishRepository.save(dish);
 
-    void updateImage(Dish dishRequest) {
-        List<DishImage> dishImages = dishRequest.getListDishImage();
-        for (DishImage d : dishImages) {
-            DishImage dishImage;
-            if (d.getDishImageID() != null) {
-                dishImage = dishImageRepository.getById(d.getDishImageID());
-            } else {
-                dishImage = new DishImage();
+        updateFormulaAndStep(dishRequest);
+
+        updateIngredientDetailAndIngredientChange(dishRequest);
+
+        updateCategory(dish.getDishID(), dishRequest);
+        updateImage(dishRequest, dish);
+    }
+
+    void updateIngredientDetailAndIngredientChange(Dish dishRequest) {
+        List<IngredientDetail> ingredientDetailList = dishRequest.getListIngredientDetail();
+
+        for (IngredientDetail detail : ingredientDetailList) {
+            IngredientDetail ingredientDetail = new IngredientDetail();
+            ingredientDetail.setName(detail.getName());
+            ingredientDetail.setQuantity(detail.getQuantity());
+            ingredientDetail.setUnit(detail.getUnit());
+            ingredientDetail.setCalo(detail.getCalo());
+            ingredientDetail.setDishID(dishRequest);
+            ingredientDetail.setIngredientDetailID(ingredientDetailRepository.save(ingredientDetail).getIngredientDetailID());
+
+            for (IngredientChange ic : detail.getIngredientChangeList()) {
+                IngredientChange change = new IngredientChange();
+                change.setName(ic.getName());
+                change.setQuantity(ic.getQuantity());
+                change.setUnit(ic.getUnit());
+                change.setCalo(ic.getCalo());
+                change.setIngredientDetail(ingredientDetail);
+                ingredientChangeRepository.save(change);
             }
+        }
+    }
+
+    void updateImage(Dish dishRequest, Dish dish) {
+        List<DishImage> listImagesRequest = dishRequest.getListDishImage();
+
+        for (DishImage d : listImagesRequest) {
+            DishImage dishImage = new DishImage();
             dishImage.setUrl(d.getUrl());
             dishImage.setNote(d.getNote());
             dishImage.setDishID(dishRequest);
@@ -420,32 +440,60 @@ public class DishSeviceImpl implements DishServive {
         }
     }
 
-    Formula updateFormulaAndStep(Dish dishRequest) {
-        Formula formula = new Formula();
-        formula.setFormulaID(dishRequest.getFormulaId().getFormulaID());
+    void updateFormulaAndStep(Dish dishRequest) {
+        Formula formula = formulaRepository.findByDish_DishID(dishRequest.getDishID());
 
         formula.setDescribe(dishRequest.getFormulaId().getDescribe());
         formula.setSummary(dishRequest.getFormulaId().getSummary());
+        formulaRepository.save(formula);
 
-        Account account = accountRepository.findAccountByUserName(dishRequest.getFormulaId().getAccount().getUserName());
-        if (account == null) {
-            throw new NotFoundException(ErrorCode.Not_Found, "tài khoản không có quyền hoặc đã bị khóa!!!");
-        }
+        List<Step> listStepRequest = dishRequest.getFormulaId().getListStep();
+//        List<Step> listStep = dish.getFormulaId().getListStep();
 
-        formula.setAccount(account);
-        formula.setFormulaID(formulaRepository.save(formula).getFormulaID());
+        /*
+         mode = 1 add new step
+         mode = 2 delete step
+         mode = 3 update step
+         */
+//        int mode;
+//
+//        if (listStepRequest.size() > listStep.size()) {
+//            mode = 1;
+//        } else if (listStepRequest.size() < listStep.size()) {
+//            mode = 2;
+//        } else {
+//            mode = 3;
+//        }
+//
+//        for (Step s : listStepRequest) {
+//            Step step = stepRepository.findByStepIDAndTitle(s.getStepID(), s.getTitle());
+//
+//            if (step == null && mode == 1) {
+//                step = new Step();
+//            } else if (step == null && mode == 2) {
+//                listStep.remove(step);
+//                continue;
+//            }
+//
+//            step.setDescribe(s.getDescribe());
+//            step.setTitle(s.getTitle());
+//            step.setFormulaID(formula);
+//            stepRepository.save(step);
+//        }
+//
+//        for (Step st : listStep) {
+//            stepRepository.deleteByStepIDAndTitle(st.getStepID(), st.getTitle());
+//        }
 
-
-        Set<Step> stepSet = dishRequest.getFormulaId().getListStep();
-        for (Step s : stepSet) {
+        List<Step> listStep = dishRequest.getFormulaId().getListStep();
+        for (Step s : listStep) {
             Step step = new Step();
-            step.setStepID(s.getStepID());
             step.setDescribe(s.getDescribe());
             step.setTitle(s.getTitle());
             step.setFormulaID(formula);
             stepRepository.save(step);
         }
-        return formula;
+
     }
 
     @Override

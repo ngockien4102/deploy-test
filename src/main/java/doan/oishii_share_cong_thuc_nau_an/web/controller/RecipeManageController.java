@@ -1,9 +1,12 @@
 package doan.oishii_share_cong_thuc_nau_an.web.controller;
 
+import doan.oishii_share_cong_thuc_nau_an.common.logging.LogUtils;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishFormulaVo;
 import doan.oishii_share_cong_thuc_nau_an.dto.Responds.DishEditResponse;
 import doan.oishii_share_cong_thuc_nau_an.service.DishServive;
+import doan.oishii_share_cong_thuc_nau_an.service.IngredientDetailService;
 import doan.oishii_share_cong_thuc_nau_an.web.entities.Dish;
+import doan.oishii_share_cong_thuc_nau_an.web.entities.IngredientDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -20,11 +23,15 @@ public class RecipeManageController {
     @Autowired
     private DishServive dishServive;
 
+    @Autowired
+    private IngredientDetailService ingredientDetailService;
+
     //lấy danh sách quản lý tất cả công thức
     @GetMapping("/admin/listRecipe")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getAllRecipe(Model model,
                                           @RequestParam(required = false) String searchData, @RequestParam(required = false) Integer pageIndex) {
+        LogUtils.getLog().info("START getAllRecipe");
         if (pageIndex == null) {
             pageIndex = 1;
         }
@@ -32,6 +39,7 @@ public class RecipeManageController {
         model.addAttribute("dishFormulaVoList", dishFormulaVoList.toList());
         model.addAttribute("pageIndex", pageIndex);
         model.addAttribute("numOfPages", dishFormulaVoList.getTotalPages());
+        LogUtils.getLog().info("END getAllRecipe");
         return ResponseEntity.ok(model);
     }
 
@@ -41,6 +49,7 @@ public class RecipeManageController {
     public ResponseEntity<?> getRecipeOfCreater(Model model,
                                                 @RequestParam(value = "creater") String creater,
                                                 @RequestParam(required = false) String searchData,@RequestParam(required = false) Integer pageIndex) {
+        LogUtils.getLog().info("START getRecipeOfCreater");
         if (pageIndex == null) {
             pageIndex = 1;
         }
@@ -48,6 +57,7 @@ public class RecipeManageController {
         model.addAttribute("dishFormulaVoList", dishFormulaVoList.toList());
         model.addAttribute("pageIndex", pageIndex);
         model.addAttribute("numOfPages", dishFormulaVoList.getTotalPages());
+        LogUtils.getLog().info("END getRecipeOfCreater");
         return ResponseEntity.ok(model);
     }
 
@@ -57,21 +67,23 @@ public class RecipeManageController {
         return new ResponseEntity<>("Thêm món ăn thành công !!!", HttpStatus.OK);
     }
 
-    @GetMapping("/mod/getdishbyid/{id}")
-    public ResponseEntity<?>getDishById(@PathVariable("id")Integer id){
+    @GetMapping("/mod/getdishbyid")
+    public ResponseEntity<?>getDishById(@RequestParam("dish_id")Integer id){
         DishEditResponse dishEditResponse = dishServive.getDishById(id);
         return ResponseEntity.ok(dishEditResponse);
     }
 
-//    @PutMapping("/mod/editrecipe")
-//    public ResponseEntity<?> updateRecipe(@RequestBody Dish dishRequest) {
-//        dishServive.editRecipe(dishRequest);
-//        return new ResponseEntity<>("update success", HttpStatus.OK);
-//    }
+    @PutMapping("/mod/editrecipe")
+    public ResponseEntity<?> updateRecipe(@RequestParam("recipe_id") Integer dishId ,@RequestBody Dish dishRequest) {
+        dishServive.editRecipe(dishId,dishRequest);
+        return new ResponseEntity<>("update success", HttpStatus.OK);
+    }
 
-    @DeleteMapping("/mod/deleterecipe/{id}")
-    public ResponseEntity<?> deleteRecipe(@PathVariable("id") Integer recipeId) {
+    @DeleteMapping("/mod/deleterecipe")
+    public ResponseEntity<?> deleteRecipe(@RequestParam("recipe_id") Integer recipeId) {
         dishServive.deleteRecipe(recipeId);
         return new ResponseEntity<>("xóa món ăn thành công!!!", HttpStatus.OK);
     }
+
+
 }

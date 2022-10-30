@@ -36,7 +36,7 @@ public class Formula {
 
     @OneToMany( mappedBy = "formulaID", cascade = CascadeType.ALL)
 //    @JsonManagedReference
-    private Set<Step> listStep;
+    private List<Step> listStep;
 
     @OneToOne(mappedBy = "formulaId")
 //    @JsonBackReference(value = "dish-fomula")

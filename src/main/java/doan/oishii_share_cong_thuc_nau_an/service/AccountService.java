@@ -4,6 +4,7 @@ import doan.oishii_share_cong_thuc_nau_an.common.vo.AccountManageVo;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.AccountVo;
 import doan.oishii_share_cong_thuc_nau_an.web.entities.Account;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
@@ -21,4 +22,8 @@ public interface AccountService {
      void updatePassword(Account account, String newPassword);
 
      void updateResetPasswordToken (String token, String email) throws AccountNotFoundException;
+
+     ResponseEntity<?> changeRole(Integer accountId, String role) ;
+
+     ResponseEntity<?> deleteAccount(Integer accountId) ;
 }

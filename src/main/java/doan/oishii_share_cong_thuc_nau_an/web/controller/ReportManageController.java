@@ -1,5 +1,6 @@
 package doan.oishii_share_cong_thuc_nau_an.web.controller;
 
+import doan.oishii_share_cong_thuc_nau_an.common.logging.LogUtils;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.BlogCommentAccountVo;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.BlogVo;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishCommentAccountVo;
@@ -31,6 +32,7 @@ public class ReportManageController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getListDishCommentReport(Model model, @RequestParam(required = false) String searchData ,
                                          @RequestParam(required = false) Integer pageIndex) {
+        LogUtils.getLog().info("START getListDishCommentReport");
         if (pageIndex == null) {
             pageIndex = 1;
         }
@@ -38,6 +40,7 @@ public class ReportManageController {
         model.addAttribute("dishCommentAccountVoList", dishCommentAccountVoList.toList());
         model.addAttribute("pageIndex", pageIndex);
         model.addAttribute("numOfPages", dishCommentAccountVoList.getTotalPages());
+        LogUtils.getLog().info("END getListDishCommentReport");
         return ResponseEntity.ok(model);
     }
 
@@ -45,6 +48,7 @@ public class ReportManageController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getListBlogCommentReport(Model model, @RequestParam(required = false) String searchData ,
                                                       @RequestParam(required = false) Integer pageIndex) {
+        LogUtils.getLog().info("START getListBlogCommentReport");
         if (pageIndex == null) {
             pageIndex = 1;
         }
@@ -52,6 +56,7 @@ public class ReportManageController {
         model.addAttribute("dishCommentAccountVoList", blogCommentAccountVos.toList());
         model.addAttribute("pageIndex", pageIndex);
         model.addAttribute("numOfPages", blogCommentAccountVos.getTotalPages());
+        LogUtils.getLog().info("END getListBlogCommentReport");
         return ResponseEntity.ok(model);
     }
 

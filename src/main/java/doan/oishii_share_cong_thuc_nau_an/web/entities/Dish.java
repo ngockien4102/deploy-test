@@ -73,7 +73,7 @@ public class Dish  {
 //    @JsonManagedReference(value = "category-dish")
     private List<DishCategory> idDishCategory;
 
-    @OneToMany( mappedBy = "dishID", cascade = CascadeType.ALL)
+    @OneToMany( mappedBy = "dishID",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    @JsonManagedReference(value = "ingredient-dish")
     private List<IngredientDetail> listIngredientDetail;
 }

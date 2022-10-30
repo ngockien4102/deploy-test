@@ -1,6 +1,9 @@
 package doan.oishii_share_cong_thuc_nau_an.service.impl;
 
+import doan.oishii_share_cong_thuc_nau_an.Exception.ErrorCode;
+import doan.oishii_share_cong_thuc_nau_an.Exception.NotFoundException;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.AccountManageVo;
+import doan.oishii_share_cong_thuc_nau_an.common.vo.MessageVo;
 import doan.oishii_share_cong_thuc_nau_an.repositories.AccountRepository;
 import doan.oishii_share_cong_thuc_nau_an.service.AccountService;
 import doan.oishii_share_cong_thuc_nau_an.web.entities.Account;
@@ -8,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,6 +76,37 @@ public class AccountServiceImpl implements AccountService {
         } else {
             throw new AccountNotFoundException("Could not find any customer with the email " + email);
         }
+    }
+
+    @Override
+    public ResponseEntity<?> changeRole(Integer accountId, String role) {
+        Account account = accountRepository.findById(accountId).orElseThrow(() ->
+                new NotFoundException(ErrorCode.Not_Found, "account" + accountId + " Not exist or account was blocked "));;
+       if(role.trim().equalsIgnoreCase("admin")){
+            account.setRole("ROLE_ADMIN");
+            accountRepository.save(account);
+           return ResponseEntity.ok(new MessageVo("cập nhật role thành công", "success"));
+        } else if (role.trim().equalsIgnoreCase("mod")) {
+           account.setRole("ROLE_MOD");
+           accountRepository.save(account);
+           return ResponseEntity.ok(new MessageVo("cập nhật role thành công", "success"));
+       }else if(role.trim().equalsIgnoreCase("user")){
+           account.setRole("ROLE_USER");
+           accountRepository.save(account);
+           return ResponseEntity.ok(new MessageVo("cập nhật role thành công", "success"));
+       }else {
+           return ResponseEntity.ok(new MessageVo("có gì đó sai sai", "error"));
+       }
+
+    }
+
+    @Override
+    public ResponseEntity<?> deleteAccount(Integer accountId) {
+        Account account = accountRepository.findById(accountId).orElseThrow(() ->
+                new NotFoundException(ErrorCode.Not_Found, "account" + accountId + " Not exist or account was blocked "));;
+         account.setStatus(3);
+         accountRepository.save(account);
+        return ResponseEntity.ok(new MessageVo("xóa tài khoản thành công", "success"));
     }
 
     @Override

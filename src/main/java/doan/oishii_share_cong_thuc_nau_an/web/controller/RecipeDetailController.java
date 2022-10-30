@@ -1,5 +1,6 @@
 package doan.oishii_share_cong_thuc_nau_an.web.controller;
 
+import doan.oishii_share_cong_thuc_nau_an.common.logging.LogUtils;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.*;
 import doan.oishii_share_cong_thuc_nau_an.repositories.AccountRepository;
 import doan.oishii_share_cong_thuc_nau_an.repositories.CheckLikeDislikeReportRepository;
@@ -51,12 +52,13 @@ public class RecipeDetailController {
     // lấy toàn bộ công thức
     @GetMapping("/getRecipeDetail")
     public ResponseEntity<?> getRecipeDetail(@RequestParam(value = "dishId") Integer dishId) {
-
+        LogUtils.getLog().info("START getRecipeDetail");
         DishDetailVo dishDetailVo = dishServive.getDishDetail(dishId);
         dishDetailVo.setStepList(stepService.findByFormulaID(dishDetailVo.getFormulaID()));
         dishDetailVo.setDishImageList(dishImageService.findByDishID(dishDetailVo.getDishID()));
         //dishDetailVo.setDishCommentList(dishCommentService.findDishCommentByDishId(dishDetailVo.getDishID()));
         dishDetailVo.setIngredientDetailList(ingredientDetailService.findIngredientDetailVoByDishID(dishDetailVo.getDishID()));
+        LogUtils.getLog().info("END getRecipeDetail");
         return ResponseEntity.ok(dishDetailVo);
 
     }
@@ -66,6 +68,7 @@ public class RecipeDetailController {
     public ResponseEntity<?> getListCommentOfRecipe(Model model, @RequestParam(value = "dishId") Integer dishId,
                                                     @RequestParam(required = false) Integer pageIndex,
                                                     Authentication authentication) {
+        LogUtils.getLog().info("START getListCommentOfRecipe");
         if (pageIndex == null) {
             pageIndex = 1;
         }
@@ -90,6 +93,7 @@ public class RecipeDetailController {
         model.addAttribute("dishCommentAccountVoList", dishCommentAccountVoList.toList());
         model.addAttribute("pageIndex", pageIndex);
         model.addAttribute("numOfPages", dishCommentAccountVoList.getTotalPages());
+        LogUtils.getLog().info("END getListCommentOfRecipe");
         return ResponseEntity.ok(model);
 
     }

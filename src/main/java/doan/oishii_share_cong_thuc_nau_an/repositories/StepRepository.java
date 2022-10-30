@@ -4,16 +4,28 @@ package doan.oishii_share_cong_thuc_nau_an.repositories;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishVo;
 import doan.oishii_share_cong_thuc_nau_an.web.entities.Step;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 @Repository
 public interface StepRepository extends JpaRepository<Step, Integer> {
 
-
-
     @Query("select s from Step s where s.formulaID.formulaID = :formulaId")
     public List<Step> findByFormulaID(Integer formulaId);
+
+    public void deleteByStepIDAndTitle(Integer stepId, Integer title);
+
+    public Step findByStepIDAndTitle(Integer stepId, Integer title);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE s FROM dbo.step s JOIN dbo.formula f ON f.formula_id = s.formula_id\n" +
+            "JOIN dbo.dish d ON d.formula_id = f.formula_id WHERE d.dish_id= :dishId",nativeQuery = true)
+    public void deleteStepByDishId(@Param("dishId") Integer dishId);
 }

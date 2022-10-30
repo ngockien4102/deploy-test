@@ -22,15 +22,15 @@ public interface DishServive {
 
     DishDetailVo getDishDetail(Integer dishId);
 
-    List<DishResponse> getDishByName(String name);
+    List<DishResponse> getDishByName(String name,Integer pageIndex);
 
-    List<DishResponse> getDishByCate(Integer cate);
+    List<DishResponse> getDishByCate(Integer cate,Integer pageIndex);
 
     List<DishResponse> getTop5New();
 
     void CreateNewRecipe(Dish dishRequest);
 
-    // void editRecipe(Dish dishRequest);
+     void editRecipe(Integer dishId,Dish dishRequest);
 
     void deleteRecipe(Integer recipeId);
 

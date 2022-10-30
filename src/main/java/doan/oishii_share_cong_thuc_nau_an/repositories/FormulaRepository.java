@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FormulaRepository extends JpaRepository<Formula,Integer> {
+    public Formula findByDish_DishID(Integer dishId);
 }

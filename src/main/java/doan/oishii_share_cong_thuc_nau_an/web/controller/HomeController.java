@@ -1,5 +1,6 @@
 package doan.oishii_share_cong_thuc_nau_an.web.controller;
 
+import doan.oishii_share_cong_thuc_nau_an.common.logging.LogUtils;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishCategoryVo;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishDetailVo;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishImageVo;
@@ -10,6 +11,7 @@ import doan.oishii_share_cong_thuc_nau_an.service.*;
 import doan.oishii_share_cong_thuc_nau_an.web.entities.DishCategory;
 import doan.oishii_share_cong_thuc_nau_an.web.entities.DishImage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +44,7 @@ public class HomeController {
 
     @GetMapping("/getTop5VoteWeek")
     public ResponseEntity<?> getTop5VoteWeek() {
-
+        LogUtils.getLog().info("START getTop5VoteWeek");
         List<DishVo> top5VoteWeek = dishServive.getTop5VoteWeek();
         for(DishVo dishVo : top5VoteWeek){
             List<DishImageVo> imageList = dishImageService.findByDishID(dishVo.getDishId());
@@ -53,13 +55,14 @@ public class HomeController {
                 dishVo.setAvgStarRate(0.0);
             }
         }
+        LogUtils.getLog().info("END getTop5VoteWeek");
         return ResponseEntity.ok(top5VoteWeek);
 
     }
 
     @GetMapping("/getTop5VoteMonth")
     public ResponseEntity<?> getTop5VoteMonth() {
-
+        LogUtils.getLog().info("START getTop5VoteMonth");
         List<DishVo> top5VoteMonth = dishServive.getTop5VoteMonth();
         for(DishVo dishVo : top5VoteMonth){
             List<DishImageVo> imageList = dishImageService.findByDishID(dishVo.getDishId());
@@ -70,47 +73,50 @@ public class HomeController {
                 dishVo.setAvgStarRate(0.0);
             }
         }
+        LogUtils.getLog().info("END getTop5VoteMonth");
         return ResponseEntity.ok(top5VoteMonth);
 
     }
 
     @GetMapping("/getCategories")
     public ResponseEntity<?> getAllCategories() {
+        LogUtils.getLog().info("START getAllCategories");
         List<DishCategoryVo> listCategory = categoryService.findAllCategory();
+        LogUtils.getLog().info("END getAllCategories");
         return ResponseEntity.ok(listCategory);
     }
 
 
 
     //get profile by id
-    // http://localhost:8080/profile/{id}
-    @GetMapping("/getprofile/{id}")
-    public ResponseEntity<ProfileRequest> getUserProfile(@PathVariable("id") Integer profileId) {
+    // http://localhost:8080/getprofile?profile_id=1
+    @GetMapping("/getprofile")
+    public ResponseEntity<ProfileRequest> getUserProfile(@RequestParam("profile_id") Integer profileId) {
         ProfileRequest profileRequest = homeService.getProfile(profileId);
         return ResponseEntity.ok(profileRequest);
     }
 
     //update profile by id
-    // http://localhost:8080/updateprofile/{id}
-    @PutMapping("/updateprofile/{id}")
-    public ResponseEntity<?> UpdateProfile(@PathVariable("id") Integer profileId, @RequestBody ProfileRequest profileRequest)  {
+    // http://localhost:8080/updateprofile?profile_id=1
+    @PutMapping("/updateprofile")
+    public ResponseEntity<?> UpdateProfile(@RequestParam("profile_id") Integer profileId, @RequestBody ProfileRequest profileRequest)  {
         homeService.updateProfile(profileId, profileRequest);
         return new ResponseEntity<>("update successfull", HttpStatus.OK);
     }
 
     //search recipe by name
-    //http://localhost:8080/searchdishbyname/{name}
-    @GetMapping("/searchdishbyname/{name}")
-    public ResponseEntity<List<DishResponse>> getDishByName(@PathVariable("name") String name) {
-        List<DishResponse> dishes = dishServive.getDishByName(name);
+    //http://localhost:8080/searchdishbyname?name=c
+    @GetMapping("/searchdishbyname")
+    public ResponseEntity<?> getDishByName(@RequestParam("name") String name,@RequestParam(value = "page_index",required = false)Integer pageIndex) {
+        List<DishResponse> dishes = dishServive.getDishByName(name,pageIndex);
         return ResponseEntity.ok(dishes);
     }
 
 //    search recipe by cate
-//    http://localhost:8080/searchdishbycate/{cate}
-    @GetMapping("/searchdishbycate/{cateId}")
-    public ResponseEntity<List<DishResponse>> getDishBycate(@PathVariable("cateId") Integer cate) {
-        List<DishResponse> dishes = dishServive.getDishByCate(cate);
+//    http://localhost:8080/searchdishbycate?cateId=1
+    @GetMapping("/searchdishbycate")
+    public ResponseEntity<List<DishResponse>> getDishBycate(@RequestParam("cateId") Integer cate,@RequestParam(value = "page_index",required = false)Integer pageIndex) {
+        List<DishResponse> dishes = dishServive.getDishByCate(cate,pageIndex);
         return ResponseEntity.ok(dishes);
     }
 

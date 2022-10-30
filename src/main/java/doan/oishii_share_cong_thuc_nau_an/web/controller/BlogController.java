@@ -1,5 +1,6 @@
 package doan.oishii_share_cong_thuc_nau_an.web.controller;
 
+import doan.oishii_share_cong_thuc_nau_an.common.logging.LogUtils;
 import doan.oishii_share_cong_thuc_nau_an.common.utils.LoginRequest;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.*;
 import doan.oishii_share_cong_thuc_nau_an.repositories.*;
@@ -49,6 +50,7 @@ public class BlogController {
     @GetMapping("/getListBlog")
     public ResponseEntity<?> getListBlog(Model model, @RequestParam(required = false) String searchData,
                                          @RequestParam(required = false) Integer pageIndex) {
+        LogUtils.getLog().info("START getListBlog");
         if (pageIndex == null) {
             pageIndex = 1;
         }
@@ -56,12 +58,14 @@ public class BlogController {
         model.addAttribute("listBlogActive", listBlogActive.toList());
         model.addAttribute("pageIndex", pageIndex);
         model.addAttribute("numOfPages", listBlogActive.getTotalPages());
+        LogUtils.getLog().info("END getListBlog");
         return ResponseEntity.ok(model);
     }
 
     //lấy ra blog chi tiết
     @GetMapping("/getBlogDetail")
     public ResponseEntity<?> getBlogDetail(@RequestParam(value = "blogId") Integer blogId, Authentication authentication) {
+        LogUtils.getLog().info("START getBlogDetail");
         BlogVo blogDetail = blogService.getBlogDetail(blogId);
         if (authentication != null) {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -78,6 +82,7 @@ public class BlogController {
                 blogDetail.setCheckEdit(0);// ko dc quyền edit, delete
             }
         }
+        LogUtils.getLog().info("END getBlogDetail");
         return ResponseEntity.ok(blogDetail);
     }
 
@@ -93,6 +98,7 @@ public class BlogController {
         } else {
             return blogService.updateBlog(saveBlogRequest.getBlogId(), saveBlogRequest.getTitle(), saveBlogRequest.getContent(), account);
         }
+
     }
 
     //xóa blog
@@ -110,6 +116,7 @@ public class BlogController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getListBlogPending(Model model,@RequestParam(required = false) String searchData,
                                                 @RequestParam(required = false) Integer pageIndex) {
+        LogUtils.getLog().info("START getListBlogPending");
         if (pageIndex == null) {
             pageIndex = 1;
         }
@@ -117,6 +124,7 @@ public class BlogController {
         model.addAttribute("listBlogPending", listBlogPending.toList());
         model.addAttribute("pageIndex", pageIndex);
         model.addAttribute("numOfPages", listBlogPending.getTotalPages());
+        LogUtils.getLog().info("END getListBlogPending");
         return ResponseEntity.ok(model);
     }
 
@@ -153,6 +161,7 @@ public class BlogController {
     public ResponseEntity<?> getBlogComments(Model model,@RequestParam(value = "blogId") Integer blogId,
                                              @RequestParam(required = false) Integer pageIndex,
                                              Authentication authentication) {
+        LogUtils.getLog().info("START getBlogComments");
         if (pageIndex == null) {
             pageIndex = 1;
         }
@@ -177,7 +186,9 @@ public class BlogController {
         model.addAttribute("blogCommentAccountVos", blogCommentAccountVos.toList());
         model.addAttribute("pageIndex", pageIndex);
         model.addAttribute("numOfPages", blogCommentAccountVos.getTotalPages());
+        LogUtils.getLog().info("END getBlogComments");
         return ResponseEntity.ok(model);
+
     }
 
     @PostMapping("/saveBlogComment")

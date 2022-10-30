@@ -42,7 +42,7 @@ public class Blog {
     private Account account;
 
 
-    @OneToMany( mappedBy = "blogID", cascade = CascadeType.ALL)
+    @OneToMany( mappedBy = "blogID",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    @JsonManagedReference
     private Set<BlogComment> listBlogComment;
 

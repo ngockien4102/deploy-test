@@ -23,6 +23,12 @@ public interface DishCommentRepository extends JpaRepository<DishComment, Intege
     @Query("select new doan.oishii_share_cong_thuc_nau_an.common.vo.DishCommentAccountVo" +
             "(dc.dishCommentID,dc.content,dc.flag,dc.startRate,dc.totalLike," +
             "dc.totalDisLike,cast(dc.createDate as string ),cast(dc.updateDate as string ),a.userName, a.avatarImage)" +
+            " from DishComment dc join dc.account a where dc.status <> 3 and dc.dishID.dishID = :dishId and a.status <> 3 order by dc.dishCommentID desc")
+    public List<DishCommentAccountVo> findDishCommentByDishId(Integer dishId);
+
+    @Query("select new doan.oishii_share_cong_thuc_nau_an.common.vo.DishCommentAccountVo" +
+            "(dc.dishCommentID,dc.content,dc.flag,dc.startRate,dc.totalLike," +
+            "dc.totalDisLike,cast(dc.createDate as string ),cast(dc.updateDate as string ),a.userName, a.avatarImage)" +
             " from DishComment dc join dc.account a where dc.status = 2  and a.status <> 3 and" +
             "(cast(dc.dishCommentID as string ) like :searchData or dc.content like :searchData" +
             " or a.userName like :searchData ) order by dc.dishCommentID asc")
