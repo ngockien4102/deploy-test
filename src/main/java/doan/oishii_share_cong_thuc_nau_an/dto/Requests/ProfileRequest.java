@@ -1,5 +1,6 @@
 package doan.oishii_share_cong_thuc_nau_an.dto.Requests;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ public class ProfileRequest {
 
     private String email;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate dob;
 
     private String gender;
@@ -31,8 +33,10 @@ public class ProfileRequest {
 
     private Double weight;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate createDate;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate updateDate;
 
     private String avatarImage;

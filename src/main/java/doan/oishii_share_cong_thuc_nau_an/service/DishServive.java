@@ -34,9 +34,13 @@ public interface DishServive {
 
     void deleteRecipe(Integer recipeId);
 
-    DishDetailVo getDishByBMIUser(String meal, String mainIngredient, Integer calo);
+    DishDetailVo getDishByBMIUser(String meal, String mainIngredient, Double calo);
 
-    List<Integer> getListDishByBMIUser(Integer totalCalo);
+    List<Integer> getListDishByBMIUser(Double totalCalo);
+
+    List<String> getListMainIngredient();
 
     DishEditResponse getDishById(Integer id);
+
+    String searchMainIngredient(String ingredient);
 }

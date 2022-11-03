@@ -15,14 +15,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
+@Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
 public class DishSeviceImpl implements DishServive {
 
     @Autowired
@@ -226,6 +230,7 @@ public class DishSeviceImpl implements DishServive {
             }
 
             BigDecimal bd = new BigDecimal(starRate).setScale(2, RoundingMode.HALF_UP);
+
             double formatStarRate = bd.doubleValue();
 
             dishResponse.setStarRate(formatStarRate);
@@ -294,16 +299,17 @@ public class DishSeviceImpl implements DishServive {
             ingredientDetail.setDishID(dishRequest);
             ingredientDetail.setIngredientDetailID(ingredientDetailRepository.save(ingredientDetail).getIngredientDetailID());
 
-            for (IngredientChange ic : detail.getIngredientChangeList()) {
-                IngredientChange change = new IngredientChange();
-                change.setName(ic.getName());
-                change.setQuantity(ic.getQuantity());
-                change.setUnit(ic.getUnit());
-                change.setCalo(ic.getCalo());
-                change.setIngredientDetail(ingredientDetail);
-                ingredientChangeRepository.save(change);
+            if (detail.getIngredientChangeList() != null) {
+                for (IngredientChange ic : detail.getIngredientChangeList()) {
+                    IngredientChange change = new IngredientChange();
+                    change.setName(ic.getName());
+                    change.setQuantity(ic.getQuantity());
+                    change.setUnit(ic.getUnit());
+                    change.setCalo(ic.getCalo());
+                    change.setIngredientDetail(ingredientDetail);
+                    ingredientChangeRepository.save(change);
+                }
             }
-
 
         }
     }
@@ -409,15 +415,18 @@ public class DishSeviceImpl implements DishServive {
             ingredientDetail.setDishID(dishRequest);
             ingredientDetail.setIngredientDetailID(ingredientDetailRepository.save(ingredientDetail).getIngredientDetailID());
 
-            for (IngredientChange ic : detail.getIngredientChangeList()) {
-                IngredientChange change = new IngredientChange();
-                change.setName(ic.getName());
-                change.setQuantity(ic.getQuantity());
-                change.setUnit(ic.getUnit());
-                change.setCalo(ic.getCalo());
-                change.setIngredientDetail(ingredientDetail);
-                ingredientChangeRepository.save(change);
+            if (detail.getIngredientChangeList() != null) {
+                for (IngredientChange ic : detail.getIngredientChangeList()) {
+                    IngredientChange change = new IngredientChange();
+                    change.setName(ic.getName());
+                    change.setQuantity(ic.getQuantity());
+                    change.setUnit(ic.getUnit());
+                    change.setCalo(ic.getCalo());
+                    change.setIngredientDetail(ingredientDetail);
+                    ingredientChangeRepository.save(change);
+                }
             }
+
         }
     }
 
@@ -497,31 +506,54 @@ public class DishSeviceImpl implements DishServive {
     }
 
     @Override
-    public DishDetailVo getDishByBMIUser(String meal, String mainIngredient, Integer calo) {
-        Integer CaloDetail = 0;
-        if (meal.equals("Bua sang")) {
+    public DishDetailVo getDishByBMIUser(String meal, String mainIngredient, Double calo) {
+        Double CaloDetail = 0.0;
+        if (meal.equals("Bữa sáng")) {
             CaloDetail = calo * 25 / 100;
-        } else if (meal.equals("Bua trua")) {
+        } else if (meal.equals("Bữa trưa")) {
             CaloDetail = calo * 25 / 100;
-        } else {
+        } else if (meal.equals("Bữa tối")) {
             CaloDetail = calo * 25 / 100;
         }
-        List<DishDetailVo> a = dishRepository.getDishByBMIUser(meal, mainIngredient, CaloDetail);
-        return a.get(0);
+        int caloNew = (int) Math.round(CaloDetail);
+        List<DishDetailVo> dish = new ArrayList<DishDetailVo>();
+
+        List<IngredientDetail> ingredent = dishRepository.getMainIngredient(mainIngredient);
+        if (ingredent.size() > 0) {
+            dish = dishRepository.getDishByBMIUser(meal, mainIngredient, caloNew);
+            if(dish.size() == 0){
+                return null;
+            }
+            Collections.shuffle(dish);
+        } else {
+            return null;
+        }
+        return dish.get(0);
     }
 
     @Override
-    public List<Integer> getListDishByBMIUser(Integer totalCalo) {
+    public List<Integer> getListDishByBMIUser(Double totalCalo) {
         List<Integer> listID = new ArrayList<>();
-        int breakfastCalo = totalCalo * 25 / 100;
-        int lunchCalo = totalCalo * 25 / 100;
-        int dinnerCalo = totalCalo * 15 / 100;
+        Double breakfastCalo = totalCalo * 25 / 100;
+        Double lunchCalo = totalCalo * 25 / 100;
+        Double dinnerCalo = totalCalo * 15 / 100;
 
-        List<DishDetailVo> listDishBreakfastByBMIUser = new ArrayList<DishDetailVo>();
-        listDishBreakfastByBMIUser = dishRepository.getListDishByBMIUser(breakfastCalo, "bca");
-        List<DishDetailVo> listDishLunchByBMIUser = dishRepository.getListDishByBMIUser(lunchCalo, "luoc");
-        List<DishDetailVo> listDishDinnerByBMIUser = dishRepository.getListDishByBMIUser(dinnerCalo, "luoc");
+        int breakfastCaloNew = (int) Math.round(breakfastCalo);
+        int lunchCaloNew = (int) Math.round(lunchCalo);
+        int dinnerCaloNew = (int) Math.round(dinnerCalo);
 
+        List<DishDetailVo> listDishBreakfastByBMIUser = dishRepository.getListDishByBMIUser(breakfastCaloNew, "Bữa sáng");
+        if(listDishBreakfastByBMIUser.size() == 0){
+            throw new NotFoundException(ErrorCode.Not_Found, "Data không có món ăn sáng phù hợp với lượng calo trên");
+        }
+        List<DishDetailVo> listDishLunchByBMIUser = dishRepository.getListDishByBMIUser(lunchCaloNew, "Bữa trưa");
+        if(listDishLunchByBMIUser.size() == 0){
+            throw new NotFoundException(ErrorCode.Not_Found, "Data không có món ăn trưa phù hợp với lượng calo trên");
+        }
+        List<DishDetailVo> listDishDinnerByBMIUser = dishRepository.getListDishByBMIUser(dinnerCaloNew, "Bữa tối");
+        if(listDishDinnerByBMIUser.size() == 0){
+            throw new NotFoundException(ErrorCode.Not_Found, "Data không có món ăn tối phù hợp với lượng calo trên");
+        }
         Collections.shuffle(listDishBreakfastByBMIUser);
         Collections.shuffle(listDishLunchByBMIUser);
         Collections.shuffle(listDishDinnerByBMIUser);
@@ -550,6 +582,25 @@ public class DishSeviceImpl implements DishServive {
         listID.add(dishDinnerId);
 
         return listID;
+    }
+
+    @Override
+    public List<String> getListMainIngredient() {
+        List<IngredientDetail> listAllMainIngredient = dishRepository.getListMainIngredient();
+        //listAllMainIngredient = listAllMainIngredient.stream().distinct().collect(Collectors.toList());
+        List<String> listMainIngredient = new ArrayList<>();
+
+        int count = 0;
+        for (IngredientDetail i : listAllMainIngredient) {
+            if (count <= 10) {
+                listMainIngredient.add(i.getName());
+                count++;
+            }
+        }
+        Set elementsAlreadySeen = new LinkedHashSet<>();
+        listMainIngredient.removeIf(s -> !elementsAlreadySeen.add(s));
+        //List<String> listMainIngredient = List.newArrayList(Sets.newHashSet(listWithDuplicates));
+        return listMainIngredient;
     }
 
     @Override
@@ -638,5 +689,22 @@ public class DishSeviceImpl implements DishServive {
         }
         response.setListIngredientDetail(listIngredientDetail);
         return response;
+    }
+
+    @Override
+    public String searchMainIngredient(String ingredient) {
+        List<IngredientDetail> listAllMainIngredient = dishRepository.searchMainIngredient(ingredient);
+        if(listAllMainIngredient.size() == 0){
+            return null;
+        }
+        int count = 0;
+        String mainIngredient = "";
+        for (IngredientDetail i : listAllMainIngredient) {
+            if (count <= 1) {
+                mainIngredient = i.getName();
+                count++;
+            }
+        }
+        return mainIngredient;
     }
 }

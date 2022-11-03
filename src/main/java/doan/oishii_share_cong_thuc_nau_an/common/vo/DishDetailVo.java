@@ -45,7 +45,7 @@ public class DishDetailVo {
 
     //step--------------------------------
 
-    private List<Step> stepList;
+    private List<StepVo> stepList;
 
     //DishImage------------------------------
     private List<DishImageVo> dishImageList;

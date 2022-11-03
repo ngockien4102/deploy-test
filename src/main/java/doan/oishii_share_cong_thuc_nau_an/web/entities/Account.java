@@ -58,6 +58,12 @@ public class Account {
 	@Column(nullable=true, name = "mobility")
 	private Double mobility;
 
+	@Column(nullable=true, name = "totalCalo")
+	private Double totalCalo;
+
+	@Column(name = "target", columnDefinition = "nvarchar(max)")
+	private String target;
+
 	@Column(name = "create_date", columnDefinition = "DATE")
 	private LocalDate createDate;
 

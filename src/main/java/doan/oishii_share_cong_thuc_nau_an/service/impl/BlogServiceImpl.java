@@ -71,7 +71,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public ResponseEntity<?> updateBlog(Integer blogId, String title, String content, Account account) {
         Blog blog = blogRepository.findById(blogId).orElseThrow(() ->
-                new NotFoundException(ErrorCode.Not_Found, "blog" + blogId + " Not exist or blog was blocked "));
+                new NotFoundException(ErrorCode.Not_Found, "blog này không tồn tại "));
         if (blog.getAccount().getAccountId() == account.getAccountId()) {
             blog.setTitle(title);
             blog.setAccount(account);

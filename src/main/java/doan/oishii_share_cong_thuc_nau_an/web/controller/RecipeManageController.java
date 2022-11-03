@@ -64,7 +64,7 @@ public class RecipeManageController {
     @PostMapping("/mod/createrecipe")
     public ResponseEntity<String> CreateRecipe(@RequestBody Dish dishRequest) {
         dishServive.CreateNewRecipe(dishRequest);
-        return new ResponseEntity<>("Thêm món ăn thành công !!!", HttpStatus.OK);
+        return new ResponseEntity<>("Thêm công thức thành công !!!", HttpStatus.OK);
     }
 
     @GetMapping("/mod/getdishbyid")
@@ -74,15 +74,15 @@ public class RecipeManageController {
     }
 
     @PutMapping("/mod/editrecipe")
-    public ResponseEntity<?> updateRecipe(@RequestParam("recipe_id") Integer dishId ,@RequestBody Dish dishRequest) {
+    public ResponseEntity<String> updateRecipe(@RequestParam("recipe_id") Integer dishId ,@RequestBody Dish dishRequest) {
         dishServive.editRecipe(dishId,dishRequest);
-        return new ResponseEntity<>("update success", HttpStatus.OK);
+        return new ResponseEntity<>("Cập nhật công thức thành công", HttpStatus.OK);
     }
 
     @DeleteMapping("/mod/deleterecipe")
     public ResponseEntity<?> deleteRecipe(@RequestParam("recipe_id") Integer recipeId) {
         dishServive.deleteRecipe(recipeId);
-        return new ResponseEntity<>("xóa món ăn thành công!!!", HttpStatus.OK);
+        return new ResponseEntity<>("xóa công thức thành công!!!", HttpStatus.OK);
     }
 
 

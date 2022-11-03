@@ -91,6 +91,12 @@ public class BlogController {
     @PreAuthorize("hasRole('ROLE_ADMIN')or hasRole('ROLE_MOD')or hasRole('ROLE_USER')")
     public ResponseEntity<?> saveBlog(@Valid @RequestBody SaveBlogRequest saveBlogRequest,
                                       Authentication authentication) {
+        if(saveBlogRequest.getTitle() == null || saveBlogRequest.getTitle().trim() == ""){
+            return ResponseEntity.ok(new MessageVo("xin hãy điền tiêu đề cho bài viết", "error"));
+        }
+        if(saveBlogRequest.getContent() == null || saveBlogRequest.getContent().trim() == ""){
+            return ResponseEntity.ok(new MessageVo("xin hãy điền nội dung cho bài viết", "error"));
+        }
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Account account = accountRepository.findAccountByUserName(userDetails.getUsername());
         if (saveBlogRequest.getBlogId() == null) {

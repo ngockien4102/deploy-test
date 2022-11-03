@@ -53,6 +53,7 @@ public class RecipeDetailController {
     @GetMapping("/getRecipeDetail")
     public ResponseEntity<?> getRecipeDetail(@RequestParam(value = "dishId") Integer dishId) {
         LogUtils.getLog().info("START getRecipeDetail");
+        try{
         DishDetailVo dishDetailVo = dishServive.getDishDetail(dishId);
         dishDetailVo.setStepList(stepService.findByFormulaID(dishDetailVo.getFormulaID()));
         dishDetailVo.setDishImageList(dishImageService.findByDishID(dishDetailVo.getDishID()));
@@ -60,7 +61,11 @@ public class RecipeDetailController {
         dishDetailVo.setIngredientDetailList(ingredientDetailService.findIngredientDetailVoByDishID(dishDetailVo.getDishID()));
         LogUtils.getLog().info("END getRecipeDetail");
         return ResponseEntity.ok(dishDetailVo);
-
+        }catch (NullPointerException e){
+            return ResponseEntity.ok(new MessageVo("công thức này không tồn tại", "error"));
+        }catch (Exception e) {
+            return ResponseEntity.ok(new MessageVo("có lỗi khi lấy thông tin của công thức này", "error"));
+        }
     }
 
     // lấy danh sách comment của công thức

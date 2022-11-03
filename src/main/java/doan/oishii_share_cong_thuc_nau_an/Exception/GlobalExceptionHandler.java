@@ -2,6 +2,7 @@ package doan.oishii_share_cong_thuc_nau_an.Exception;
 
 import doan.oishii_share_cong_thuc_nau_an.dto.Responds.ExceptionResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -38,12 +39,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 //        return new ExceptionResponse(ErrorCode.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
 //    }
 
-//    @ExceptionHandler(BadCredentialsException.class)
-//    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-//    public ExceptionResponse handleBadCredentialsExceptionException(Exception ex, WebRequest request) {
-//        // quá trình kiểm soat lỗi diễn ra ở đây
-//        return new ExceptionResponse(ErrorCode.INTERNAL_SERVER_ERROR, "Tên người dùng hoặc mật khẩu sai");
-//    }
+    //handler login sai
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse handleBadCredentialsException(Exception ex, WebRequest request) {
+        // quá trình kiểm soat lỗi diễn ra ở đây
+        return new ExceptionResponse(ErrorCode.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
+    //handler không có quyền sử dụng tài khoản
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ExceptionResponse handleAccessDeniedException(Exception ex, WebRequest request) {
+        // quá trình kiểm soat lỗi diễn ra ở đây
+        return new ExceptionResponse(ErrorCode.INTERNAL_SERVER_ERROR, "Bạn không có quyền sử dụng chức năng này");
+    }
 
 
 

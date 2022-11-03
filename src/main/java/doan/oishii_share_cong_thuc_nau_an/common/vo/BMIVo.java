@@ -8,23 +8,13 @@ import java.time.LocalDate;
 @Data
 public class BMIVo {
 
-    private int profileId;
+    private String username;
 
     private String name;
-
-    private String email;
 
     private LocalDate dob;
 
     private String gender;
-
-    private String phone;
-
-    private String address;
-
-    private int status;
-
-    private String role;
 
     private Double high;
 
@@ -32,20 +22,7 @@ public class BMIVo {
 
     private Double mobility;
 
+    private Double totalCalo;
 
-
-    public BMIVo(int profileId, String name, String email, LocalDate dob, String gender, String phone, String address, int status, String role, Double high, Double weight, Double mobility) {
-        this.profileId = profileId;
-        this.name = name;
-        this.email = email;
-        this.dob = dob;
-        this.gender = gender;
-        this.phone = phone;
-        this.address = address;
-        this.status = status;
-        this.role = role;
-        this.high = high;
-        this.weight = weight;
-        this.mobility = mobility;
-    }
+    private String target;
 }

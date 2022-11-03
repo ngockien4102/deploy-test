@@ -3,6 +3,7 @@ package doan.oishii_share_cong_thuc_nau_an.repositories;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishDetailVo;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishFormulaVo;
 import doan.oishii_share_cong_thuc_nau_an.web.entities.Dish;
+import doan.oishii_share_cong_thuc_nau_an.web.entities.IngredientDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -78,6 +79,15 @@ public interface DishRepository extends JpaRepository<Dish, Integer> {
             "where d.calo >= 0 and d.calo <= :calo and dc.name = :meal")
     public List<DishDetailVo> getListDishByBMIUser(Integer calo, String meal);
 
+    @Query("select id from IngredientDetail id where id.name = :mainIngredient and id.mainIngredient = 1 ")
+    public List<IngredientDetail> getMainIngredient(String mainIngredient);
+
+    @Query("select id from IngredientDetail id where id.mainIngredient = 1")
+    public List<IngredientDetail> getListMainIngredient();
+
     @Query("select d from Dish d where d.status=1 and d.dishID = :id")
     public Dish findByDishID(Integer id);
+
+    @Query("select id from IngredientDetail id where id.name = :ingredient")
+    public List<IngredientDetail> searchMainIngredient(String ingredient);
 }

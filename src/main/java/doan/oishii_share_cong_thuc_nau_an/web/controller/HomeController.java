@@ -5,6 +5,7 @@ import doan.oishii_share_cong_thuc_nau_an.common.vo.DishCategoryVo;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishDetailVo;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishImageVo;
 import doan.oishii_share_cong_thuc_nau_an.common.vo.DishVo;
+import doan.oishii_share_cong_thuc_nau_an.dto.Requests.ProfileEditRequest;
 import doan.oishii_share_cong_thuc_nau_an.dto.Requests.ProfileRequest;
 import doan.oishii_share_cong_thuc_nau_an.dto.Responds.DishResponse;
 import doan.oishii_share_cong_thuc_nau_an.service.*;
@@ -99,7 +100,7 @@ public class HomeController {
     //update profile by id
     // http://localhost:8080/updateprofile?profile_id=1
     @PutMapping("/updateprofile")
-    public ResponseEntity<?> UpdateProfile(@RequestParam("profile_id") Integer profileId, @RequestBody ProfileRequest profileRequest)  {
+    public ResponseEntity<?> UpdateProfile(@RequestParam("profile_id") Integer profileId, @RequestBody ProfileEditRequest profileRequest)  {
         homeService.updateProfile(profileId, profileRequest);
         return new ResponseEntity<>("update successfull", HttpStatus.OK);
     }

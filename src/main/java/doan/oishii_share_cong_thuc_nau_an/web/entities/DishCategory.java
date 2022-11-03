@@ -30,6 +30,9 @@ public class DishCategory {
     @Column(name = "dish_category_image", columnDefinition = "nvarchar(max)")
     private String dishCategoryImage;
 
+    @Column(name = "status")
+    private Integer status;
+
     @ManyToMany (mappedBy = "idDishCategory",cascade = {CascadeType.MERGE})
 //    @JsonBackReference(value = "category-dish")
     private Set<Dish> idDish;
